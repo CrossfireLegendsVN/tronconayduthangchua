@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<title>Trốn Cỡ Này Đủ Thắng Chưa? | Crossfire: Legends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --bg:#0B0A12;
+  --bg-soft:#110F1B;
+  --surface:#171325;
+  --surface-2:#1F1A31;
+  --border:#2C2542;
+  --border-soft:#231D38;
+  --purple:#8B5CF6;
+  --purple-deep:#6D28D9;
+  --purple-glow:rgba(139,92,246,.35);
+  --gold:#FFC93C;
+  --text:#F5F3FF;
+  --text-muted:#9C93B8;
+  --text-dim:#6E6690;
+  --danger:#FF5D6C;
+  --radius:16px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;overflow-x:hidden;max-width:100%;}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(circle at 15% 0%, rgba(139,92,246,.14), transparent 45%),
+    radial-gradient(circle at 100% 30%, rgba(139,92,246,.08), transparent 40%);
+  color:var(--text);
+  font-family:'Be Vietnam Pro', system-ui, sans-serif;
+  min-height:100vh;
+  -webkit-tap-highlight-color:transparent;
+  padding-bottom:92px;
+}
+.display{font-family:'Baloo 2', sans-serif;}
+h1,h2,h3{margin:0;}
+button{font-family:inherit;cursor:pointer;}
+input,textarea{font-family:inherit;}
+::selection{background:var(--purple);color:#fff;}
+
+/* ---- Top bar ---- */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  background:rgba(11,10,18,.85);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border-soft);
+  padding:12px 14px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.brand{display:flex;flex-direction:column;line-height:1.15;flex:1;min-width:0;}
+.brand .eyebrow{font-size:10px;letter-spacing:.14em;color:var(--gold);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brand .title{font-family:'Baloo 2';font-size:16px;font-weight:700;color:#fff;}
+.hint{font-size:11.5px;color:var(--text-dim);margin-top:2px;display:none;}
+@media(min-width:480px){.hint{display:block;}}
+.btn-see{
+  flex-shrink:0;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:11px 14px;
+  border-radius:999px;
+  font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:6px;
+  min-height:40px;
+}
+.btn-see:active{transform:scale(.96);}
+
+/* ---- Layout ---- */
+.wrap{
+  max-width:1180px;margin:0 auto;padding:16px 14px 32px;
+  display:grid;grid-template-columns:1fr;gap:16px;
+}
+@media(min-width:960px){
+  .wrap{grid-template-columns:1fr 420px;align-items:start;gap:32px;padding:32px 24px 60px;}
+  .preview-col{position:sticky;top:88px;}
+}
+
+/* ---- Sections ---- */
+.section{
+  background:var(--surface);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius);
+  padding:16px;
+  margin-bottom:14px;
+  position:relative;
+}
+@media(min-width:960px){.section{padding:22px;margin-bottom:18px;}}
+.section-head{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
+.section-num{
+  font-family:'Baloo 2';font-weight:700;color:var(--purple);
+  font-size:13px;border:1px solid var(--purple);border-radius:6px;
+  padding:1px 7px;
+}
+.section-title{font-family:'Baloo 2';font-size:18px;font-weight:700;color:#fff;}
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+label.flabel{display:flex;justify-content:space-between;font-size:14px;color:var(--text-muted);margin-bottom:6px;}
+.counter{font-size:12.5px;color:var(--text-dim);}
+.counter.warn{color:var(--danger);}
+input[type=text], textarea{
+  width:100%;background:var(--bg-soft);border:1.5px solid var(--border);
+  color:var(--text);border-radius:10px;padding:13px 14px;font-size:16px;
+  outline:none;transition:border-color .15s;
+}
+input[type=text]:focus, textarea:focus{border-color:var(--purple);}
+textarea{resize:vertical;min-height:70px;}
+.err-msg{display:none;color:var(--danger);font-size:12.5px;margin-top:6px;font-weight:600;}
+.field.invalid input, .field.invalid textarea{border-color:var(--danger);}
+.field.invalid .err-msg{display:block;}
+
+/* ---- Avatar picker ---- */
+.avatar-modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.mode-btn{
+  background:var(--bg-soft);border:1.5px solid var(--border);color:var(--text-muted);
+  padding:13px 10px;border-radius:10px;font-size:14px;font-weight:600;text-align:center;
+  min-height:46px;display:flex;align-items:center;justify-content:center;
+}
+.mode-btn.active{border-color:var(--purple);color:#fff;background:rgba(139,92,246,.14);}
+
+.upload-zone{
+  border:2px dashed var(--border);border-radius:12px;padding:22px 16px;text-align:center;
+  color:var(--text-muted);font-size:13.5px;cursor:pointer;min-height:88px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.upload-zone:hover{border-color:var(--purple);}
+.upload-zone svg{margin-bottom:6px;}
+.crop-area{display:none;margin-top:14px;}
+.crop-area.show{display:block;}
+.crop-box{
+  width:100%;max-width:230px;aspect-ratio:1/1;margin:0 auto;border-radius:14px;
+  overflow:hidden;position:relative;border:2px solid var(--purple);
+  background-color:#100E1A;background-repeat:no-repeat;
+  touch-action:none;cursor:grab;
+}
+.crop-box:active{cursor:grabbing;}
+.crop-box::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 0 0 100px rgba(0,0,0,0);
+  border-radius:14px;
+}
+.crop-controls{display:flex;align-items:center;gap:10px;margin-top:12px;max-width:230px;margin-left:auto;margin-right:auto;}
+.crop-controls span{font-size:16px;color:var(--text-dim);}
+input[type=range]{flex:1;accent-color:var(--purple);height:28px;}
+.crop-actions{display:flex;justify-content:center;margin-top:10px;}
+.link-btn{background:none;border:none;color:var(--danger);font-size:13px;font-weight:600;text-decoration:underline;padding:8px;}
+
+.avatar-preset-label{font-size:12.5px;color:var(--text-dim);margin:16px 0 8px;}
+.preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+@media(min-width:640px){.preset-grid{grid-template-columns:repeat(6,1fr);}}
+.preset-avatar{
+  aspect-ratio:1/1;border-radius:10px;border:2px solid var(--border);overflow:hidden;
+  position:relative;background-size:cover;background-position:center;
+}
+.preset-avatar.selected{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,201,60,.25);}
+.preset-avatar .tick{
+  position:absolute;top:3px;right:3px;width:16px;height:16px;background:var(--gold);
+  border-radius:50%;display:none;align-items:center;justify-content:center;font-size:10px;color:#1a1305;font-weight:900;
+}
+.preset-avatar.selected .tick{display:flex;}
+
+/* ---- Objects grid ---- */
+.obj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+@media(min-width:640px){.obj-grid{grid-template-columns:repeat(4,1fr);}}
+@media(min-width:960px){.obj-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:1180px){.obj-grid{grid-template-columns:repeat(4,1fr);}}
+.obj-card{
+  background:var(--bg-soft);border:2px solid var(--border);border-radius:12px;
+  padding:8px;text-align:center;position:relative;transition:border-color .15s,transform .1s;
+}
+.obj-card:active{transform:scale(.97);}
+.obj-card.selected{border-color:var(--gold);background:rgba(255,201,60,.07);}
+.obj-card img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;display:block;margin-bottom:6px;background:#0d0b16;}
+.obj-card .oname{font-size:12.5px;color:var(--text-muted);font-weight:600;line-height:1.25;}
+.obj-card.selected .oname{color:#fff;}
+.obj-card .tick{
+  position:absolute;top:4px;right:4px;width:18px;height:18px;background:var(--gold);
+  border-radius:50%;display:none;align-items:center;justify-content:center;font-size:11px;color:#1a1305;font-weight:900;
+}
+.obj-card.selected .tick{display:flex;}
+
+/* ---- Motto ---- */
+.motto-opt{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--border);
+  border-radius:10px;margin-bottom:8px;background:var(--bg-soft);font-size:13.5px;color:var(--text-muted);
+}
+.motto-opt.selected{border-color:var(--purple);color:#fff;background:rgba(139,92,246,.1);}
+.motto-opt input{accent-color:var(--purple);flex-shrink:0;width:16px;height:16px;}
+.motto-custom-wrap{display:none;margin-top:4px;}
+.motto-custom-wrap.show{display:block;}
+
+/* ---- Big action buttons ---- */
+.btn-primary{
+  width:100%;background:linear-gradient(135deg,var(--purple),var(--purple-deep));
+  color:#fff;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:700;
+  font-family:'Baloo 2';letter-spacing:.02em;box-shadow:0 8px 24px rgba(139,92,246,.35);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-primary:active{transform:scale(.98);}
+.btn-primary:disabled{opacity:.6;}
+.btn-gold{
+  width:100%;background:var(--gold);color:#241a04;border:none;padding:15px;border-radius:12px;
+  font-size:15px;font-weight:800;font-family:'Baloo 2';display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-gold:active{transform:scale(.98);}
+.btn-fb{
+  width:100%;background:var(--surface-2);border:1.5px solid var(--border);color:#fff;
+  padding:15px;border-radius:12px;font-size:14.5px;font-weight:700;font-family:'Baloo 2';
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-fb:active{transform:scale(.98);}
+.spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ---- Preview ---- */
+.preview-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.preview-title h3{font-family:'Baloo 2';font-size:15px;color:#fff;}
+.preview-title .tag{font-size:11px;color:var(--text-dim);}
+
+.card-outer{
+  border-radius:20px;padding:2px;
+  background:linear-gradient(150deg,var(--purple),#2b2247 60%,var(--purple-deep));
+  box-shadow:0 20px 50px rgba(0,0,0,.5);
+}
+#exportCard{
+  width:100%;aspect-ratio:4/5;border-radius:18px;overflow:hidden;position:relative;
+  background:
+    radial-gradient(circle at 30% 0%, rgba(139,92,246,.35), transparent 55%),
+    linear-gradient(180deg,#120F1E 0%,#0B0A12 100%);
+  padding:5% 5.5% 4%;
+  display:flex;flex-direction:column;
+  font-family:'Be Vietnam Pro', sans-serif;
+  color:#fff;
+}
+.scanlines{
+  position:absolute;inset:0;pointer-events:none;opacity:.05;
+  background:repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 3px);
+}
+.corner{position:absolute;width:22px;height:22px;border:2.5px solid var(--gold);}
+.corner.tl{top:4%;left:4%;border-right:none;border-bottom:none;}
+.corner.tr{top:4%;right:4%;border-left:none;border-bottom:none;}
+.corner.bl{bottom:4%;left:4%;border-right:none;border-top:none;}
+.corner.br{bottom:4%;right:4%;border-left:none;border-top:none;}
+.pv-event{font-size:2.8vw;letter-spacing:.3em;color:var(--gold);font-weight:700;text-align:center;}
+@media(min-width:960px){.pv-event{font-size:11px;}}
+.pv-title{
+  font-family:'Baloo 2';font-weight:800;text-align:center;font-size:7.4vw;line-height:1.05;
+  margin-top:1%;background:linear-gradient(135deg,#fff,#D8C7FF);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+@media(min-width:960px){.pv-title{font-size:29px;}}
+.pv-avatar-wrap{display:flex;justify-content:center;margin-top:2.5%;}
+.pv-avatar-frame{
+  width:16%;aspect-ratio:1/1;border-radius:50%;border:2.5px solid var(--gold);
+  background-size:cover;background-position:50% 50%;background-color:#1c1830;
+  box-shadow:0 0 0 4px rgba(139,92,246,.25),0 6px 14px rgba(0,0,0,.4);
+}
+.pv-id{text-align:center;margin-top:2.5%;}
+.pv-id .name{font-family:'Baloo 2';font-size:5.2vw;font-weight:700;color:#fff;word-break:break-word;}
+@media(min-width:960px){.pv-id .name{font-size:20px;}}
+.pv-id .uid{font-size:3.2vw;color:var(--text-muted);margin-top:.8%;letter-spacing:.05em;font-weight:600;}
+@media(min-width:960px){.pv-id .uid{font-size:13px;}}
+.pv-obj-section{
+  margin-top:3.5%;text-align:center;background:rgba(139,92,246,.08);
+  border:1px solid rgba(139,92,246,.25);border-radius:14px;padding:2.5% 4%;
+}
+.pv-obj-title{font-size:2.5vw;letter-spacing:.14em;color:var(--gold);font-weight:700;}
+@media(min-width:960px){.pv-obj-title{font-size:10px;}}
+.pv-obj-body{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:4%;margin-top:2%;}
+.pv-obj-img{width:15%;aspect-ratio:1/1;border-radius:10px;object-fit:cover;background:#1c1830;border:2px solid var(--gold);box-shadow:0 6px 14px rgba(0,0,0,.35);flex-shrink:0;}
+.pv-obj-name{font-family:'Baloo 2';font-size:4.6vw;font-weight:700;color:#fff;text-align:left;}
+@media(min-width:960px){.pv-obj-name{font-size:18px;}}
+.pv-bottom{margin-top:auto;display:flex;flex-direction:row;align-items:stretch;gap:2.5%;padding-top:3.5%;}
+.pv-box{flex:1 1 50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:3% 3%;min-width:0;display:flex;flex-direction:column;}
+.pv-box .lbl{font-size:2.3vw;letter-spacing:.08em;color:var(--purple);font-weight:700;margin-bottom:1.5%;}
+@media(min-width:960px){.pv-box .lbl{font-size:9.5px;}}
+.pv-box .txt{font-size:3vw;color:#EDEAFB;line-height:1.32;word-break:break-word;font-weight:500;}
+@media(min-width:960px){.pv-box .txt{font-size:12px;}}
+
+/* ---- Sticky bottom bar (mobile) ---- */
+.bottombar{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  background:rgba(11,10,18,.92);backdrop-filter:blur(12px);
+  border-top:1px solid var(--border-soft);
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+  display:grid;grid-template-columns:1fr;gap:0;
+}
+@media(min-width:960px){.bottombar{display:none;}}
+.result-actions{display:none;flex-direction:column;gap:10px;margin-top:16px;}
+.result-actions.show{display:flex;}
+.reset-row{display:flex;justify-content:center;margin-top:14px;}
+.reset-btn{background:none;border:none;color:var(--text-dim);font-size:13px;text-decoration:underline;padding:8px;}
+
+/* ---- Confirm modal ---- */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-backdrop.show{display:flex;}
+.modal{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:22px;max-width:340px;width:100%;text-align:center;
+}
+.modal h4{font-family:'Baloo 2';font-size:17px;margin-bottom:8px;}
+.modal p{font-size:13.5px;color:var(--text-muted);margin-bottom:18px;}
+.modal-row{display:flex;gap:10px;}
+.modal-row button{flex:1;padding:11px;border-radius:10px;font-weight:700;font-size:13.5px;border:none;}
+.modal-cancel{background:var(--surface-2);color:var(--text);border:1px solid var(--border)!important;}
+.modal-confirm{background:var(--danger);color:#fff;}
+
+.toast{
+  position:fixed;left:50%;bottom:100px;transform:translateX(-50%);z-index:200;
+  background:#241f38;border:1px solid var(--purple);color:#fff;padding:11px 18px;
+  border-radius:999px;font-size:13px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.4);
+  display:none;
+}
+.toast.show{display:block;animation:toastIn .25s ease;}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,10px);}to{opacity:1;transform:translate(-50%,0);}}
+
+.footer-note{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:20px;padding:0 20px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="eyebrow">CROSSFIRE: LEGENDS · TRỐN TÌM</span>
+    <span class="title">Trốn Cỡ Này Đủ Thắng Chưa?</span>
+    <span class="hint">Nhập thông tin, chọn đồ hóa thân, tải ảnh về và đăng lên Group nhé.</span>
+  </div>
+  <button class="btn-see" id="btnScrollPreview">
+    Xem thành phẩm
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<div class="wrap">
+  <div class="form-col">
+
+    <!-- SECTION 1 -->
+    <div class="section">
+      <div class="section-head"><span class="section-num">1</span><span class="section-title">Thông tin cá nhân</span></div>
+      <div class="field" id="field-name">
+        <label class="flabel"><span>Tên ingame</span><span class="counter" id="nameCounter">0/25</span></label>
+        <input type="text" id="inputName" maxlength="25" placeholder="Nhập tên ingame">
+        <div class="err-msg">Nhớ nhập tên ingame trước khi tạo ảnh nha.</div>
+      </div>
+      <div class="field" id="field-uid">
+        <label class="flabel"><span>UID ingame</span><span class="counter" id="uidCounter">0/18</span></label>
+        <input type="text" id="inputUid" maxlength="18" placeholder="Nhập UID ingame">
+        <div class="err-msg">UID chỉ gồm chữ và số, và không được để trống.</div>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section" id="field-avatar">
+      <div class="section-head"><span class="section-num">2</span><span class="section-title">Chọn ảnh đại diện</span></div>
+      <div class="avatar-modes">
+        <button class="mode-btn active" id="modeUploadBtn" type="button">📤 Tải ảnh cá nhân</button>
+        <button class="mode-btn" id="modePresetBtn" type="button">🎭 Avatar có sẵn</button>
+      </div>
+
+      <div id="uploadPane">
+        <div class="upload-zone" id="uploadZone">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.8"><path d="M12 16V4m0 0L7 9m5-5l5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg><br>
+          Chạm để chọn ảnh (JPG, PNG, WEBP)
+        </div>
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+        <div class="crop-area" id="cropArea">
+          <div class="crop-box" id="cropBox"></div>
+          <div class="crop-controls">
+            <span>－</span><input type="range" id="zoomRange" min="100" max="300" value="100"><span>＋</span>
+          </div>
+          <div class="crop-actions"><button class="link-btn" id="clearUpload" type="button">Xóa ảnh, chọn lại</button></div>
+        </div>
+      </div>
+
+      <div id="presetPane" style="display:none;">
+        <div class="avatar-preset-label">AVATAR NAM</div>
+        <div class="preset-grid" id="presetMaleGrid"></div>
+        <div class="avatar-preset-label">AVATAR NỮ</div>
+        <div class="preset-grid" id="presetFemaleGrid"></div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section" id="field-object">
+      <div class="section-head"><span class="section-num">3</span><span class="section-title">Chọn đồ vật muốn hóa thân</span></div>
+      <div class="obj-grid" id="objGrid"></div>
+      <div class="err-msg" id="objErr" style="display:none;margin-top:10px;">Chọn 1 đồ vật để hóa thân trước khi tạo ảnh nha.</div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section">
+      <div class="section-head"><span class="section-num">4</span><span class="section-title">Lời khuyên khi hóa thân</span></div>
+      <div class="field">
+        <label class="flabel"><span></span><span class="counter" id="adviceCounter">0/120</span></label>
+        <textarea id="inputAdvice" maxlength="120" placeholder="Ví dụ: Nên đứng gần những đồ vật có hình dạng tương tự để khó bị phát hiện."></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section">
+      <div class="section-head"><span class="section-num">5</span><span class="section-title">Châm ngôn phe trốn</span></div>
+      <div id="mottoList"></div>
+      <div class="motto-custom-wrap" id="mottoCustomWrap">
+        <div class="field">
+          <label class="flabel"><span>Tự nhập châm ngôn</span><span class="counter" id="mottoCounter">0/80</span></label>
+          <input type="text" id="inputMottoCustom" maxlength="80" placeholder="Nhập châm ngôn của riêng bạn">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btnGenerate" type="button">
+      <span id="genLabel">🎮 TẠO ẢNH</span>
+    </button>
+
+    <div class="result-actions" id="resultActions">
+      <button class="btn-gold" id="btnDownload" type="button">⬇️ TẢI ẢNH VỀ</button>
+      <button class="btn-fb" id="btnFacebook" type="button">📣 ĐĂNG BÀI VÀO GROUP CROSSFIRE: LEGENDS</button>
+      <div class="hint" style="text-align:center;">Hãy tải ảnh về trước, sau đó đăng ảnh vào Group để tham gia sự kiện.</div>
+    </div>
+
+    <div class="reset-row"><button class="reset-btn" id="btnReset" type="button">Làm lại từ đầu</button></div>
+    <div class="footer-note">Ảnh và thông tin của bạn chỉ xử lý ngay trên máy — không gửi lên server nào cả.</div>
+  </div>
+
+  <div class="preview-col" id="previewCol">
+    <div class="preview-title"><h3>Xem trước thành phẩm</h3><span class="tag">Tự động cập nhật</span></div>
+    <div class="card-outer">
+      <div id="exportCard">
+        <div class="scanlines"></div>
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <div class="pv-event">EVENT</div>
+        <div class="pv-title">TRỐN CỠ NÀY<br>ĐỦ THẮNG CHƯA?</div>
+        <div class="pv-avatar-wrap"><div class="pv-avatar-frame" id="pvAvatar"></div></div>
+        <div class="pv-id">
+          <div class="name" id="pvName">Nhập tên ingame</div>
+          <div class="uid" id="pvUid">UID: Nhập UID ingame</div>
+        </div>
+        <div class="pv-obj-section">
+          <div class="pv-obj-title">ĐỒ VẬT MUỐN BIẾN THÀNH</div>
+          <div class="pv-obj-body">
+            <img class="pv-obj-img" id="pvObjImg" src="" alt="">
+            <div class="pv-obj-name" id="pvObjName">Chưa chọn</div>
+          </div>
+        </div>
+        <div class="pv-bottom">
+          <div class="pv-box"><div class="lbl">LỜI KHUYÊN</div><div class="txt" id="pvAdvice">Chia sẻ bí quyết giúp anh em trốn thật lâu.</div></div>
+          <div class="pv-box"><div class="lbl">CHÂM NGÔN</div><div class="txt" id="pvMotto">Chọn câu nói thể hiện phong cách trốn của anh em.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottombar">
+  <button class="btn-primary" id="btnGenerateBottom" type="button">🎮 TẠO ẢNH</button>
+</div>
+
+<div class="modal-backdrop" id="resetModal">
+  <div class="modal">
+    <h4>Làm lại từ đầu?</h4>
+    <p>Toàn bộ thông tin, ảnh và lựa chọn hiện tại sẽ bị xóa. Bạn chắc chắn chứ?</p>
+    <div class="modal-row">
+      <button class="modal-cancel" id="cancelReset">Hủy</button>
+      <button class="modal-confirm" id="confirmReset">Làm lại</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ DATA CONFIG (dễ thay ảnh thật sau này) ============ */
+
+// 22 đồ vật trong chế độ Trốn Tìm. Thay "image" bằng đường dẫn ảnh thật khi có.
+const hidingObjects = [
+  { id: 1,  name: "Máy bán nước",     image: null },
+  { id: 2,  name: "Đá",               image: null },
+  { id: 3,  name: "Biển EXIT",        image: null },
+  { id: 4,  name: "Hộp đạn",          image: null },
+  { id: 5,  name: "Thùng carton",     image: null },
+  { id: 6,  name: "Laptop",           image: null },
+  { id: 7,  name: "Ghế xếp",          image: null },
+  { id: 8,  name: "Sách",             image: null },
+  { id: 9,  name: "Bình nước trái cây", image: null },
+  { id: 10, name: "Ghế mây",          image: null },
+  { id: 11, name: "Bóng rổ",          image: null },
+  { id: 12, name: "Tượng nhân vật",   image: null },
+  { id: 13, name: "Cây cảnh",         image: null },
+  { id: 14, name: "Ghế xếp nằm",      image: null },
+  { id: 15, name: "Máy lọc nước",     image: null },
+  { id: 16, name: "Bàn tròn",         image: null },
+  { id: 17, name: "Thùng rác",        image: null },
+  { id: 18, name: "Cây trúc",         image: null },
+  { id: 19, name: "Màn hình máy tính",image: null },
+  { id: 20, name: "Thùng máy tính",   image: null },
+  { id: 21, name: "Mũ bảo hiểm",      image: null },
+  { id: 22, name: "Đồ vật 22",        image: null }, // tạm — thay tên/ảnh thật sau
+];
+
+// Avatar mẫu dựng sẵn. Thay "image" bằng đường dẫn ảnh thật khi có.
+const presetAvatars = {
+  male: [
+    { id: "m1", label: "Nam 1", image: null, color: "#3B82F6" },
+    { id: "m2", label: "Nam 2", image: null, color: "#0EA5E9" },
+    { id: "m3", label: "Nam 3", image: null, color: "#22C55E" },
+  ],
+  female: [
+    { id: "f1", label: "Nữ 1", image: null, color: "#EC4899" },
+    { id: "f2", label: "Nữ 2", image: null, color: "#F472B6" },
+    { id: "f3", label: "Nữ 3", image: null, color: "#F59E0B" },
+  ]
+};
+
+const mottoOptions = [
+  "Trốn có chiến thuật, thắng có phong cách.",
+  "Không cần chạy nhanh, chỉ cần đứng đúng chỗ.",
+  "Càng giống đồ thật, càng gần chiến thắng.",
+  "Im lặng là kỹ năng, sống sót là bản lĩnh.",
+  "Tìm thấy chưa chắc đã bắt được.",
+  "Đứng im không phải sợ, mà là đang tính toán.",
+];
+
+const FB_GROUP_URL = "https://www.facebook.com/groups/crossfirelegends";
+
+/* ============ PLACEHOLDER IMAGE GENERATOR ============ */
+// Tạo icon placeholder dạng SVG (data URI) — không gọi mạng ngoài, không lỗi CORS.
+function makePlaceholderDataUri(text, seedColor){
+  const short = text.length > 12 ? text.slice(0,10)+'…' : text;
+  const c1 = seedColor || '#6D28D9';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="#1a1330"/>
+    </linearGradient></defs>
+    <rect width="200" height="200" rx="18" fill="url(#g)"/>
+    <text x="100" y="112" font-family="Arial, sans-serif" font-size="30" font-weight="700"
+      fill="#ffffff" text-anchor="middle" opacity="0.9">${escapeXml(initials(text))}</text>
+    <text x="100" y="150" font-family="Arial, sans-serif" font-size="12" fill="#ffffff" opacity="0.6"
+      text-anchor="middle">${escapeXml(short)}</text>
+  </svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+function makeAvatarPlaceholder(label, color){
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220">
+    <rect width="220" height="220" fill="${color}"/>
+    <circle cx="110" cy="86" r="40" fill="#ffffff" opacity="0.92"/>
+    <path d="M40 210 C40 150 80 130 110 130 C140 130 180 150 180 210 Z" fill="#ffffff" opacity="0.92"/>
+    <text x="110" y="205" font-family="Arial, sans-serif" font-size="16" fill="${color}" font-weight="700" text-anchor="middle"></text>
+  </svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+function initials(str){
+  return str.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+function escapeXml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+const PALETTE = ['#8B5CF6','#0EA5E9','#22C55E','#F59E0B','#EC4899','#EF4444','#14B8A6','#A855F7'];
+hidingObjects.forEach((o,i)=>{ if(!o.image) o.image = makePlaceholderDataUri(o.name, PALETTE[i % PALETTE.length]); });
+[...presetAvatars.male, ...presetAvatars.female].forEach(a=>{ if(!a.image) a.image = makeAvatarPlaceholder(a.label, a.color); });
+
+/* ============ STATE ============ */
+const state = {
+  name: "", uid: "", advice: "", 
+  avatarMode: "upload", // 'upload' | 'preset'
+  uploadedImage: null, presetAvatarId: null,
+  crop: { bgSizeW: 100, bgSizeH: 100, posX: 50, posY: 50, zoom: 1 },
+  objectId: null,
+  mottoMode: "preset", mottoPresetIndex: null, mottoCustom: ""
+};
+
+/* ============ DOM refs ============ */
+const $ = id => document.getElementById(id);
+const inputName = $('inputName'), inputUid = $('inputUid'), inputAdvice = $('inputAdvice'), inputMottoCustom = $('inputMottoCustom');
+const nameCounter = $('nameCounter'), uidCounter = $('uidCounter'), adviceCounter = $('adviceCounter'), mottoCounter = $('mottoCounter');
+
+/* ============ Section 1: name / uid ============ */
+inputName.addEventListener('input', ()=>{
+  state.name = inputName.value;
+  nameCounter.textContent = `${state.name.length}/25`;
+  clearFieldError('field-name');
+  render();
+});
+inputUid.addEventListener('input', ()=>{
+  inputUid.value = inputUid.value.replace(/[^a-zA-Z0-9]/g,'');
+  state.uid = inputUid.value;
+  uidCounter.textContent = `${state.uid.length}/18`;
+  clearFieldError('field-uid');
+  render();
+});
+
+/* ============ Section 2: avatar ============ */
+const modeUploadBtn = $('modeUploadBtn'), modePresetBtn = $('modePresetBtn');
+const uploadPane = $('uploadPane'), presetPane = $('presetPane');
+modeUploadBtn.addEventListener('click', ()=>{
+  state.avatarMode = 'upload';
+  modeUploadBtn.classList.add('active'); modePresetBtn.classList.remove('active');
+  uploadPane.style.display=''; presetPane.style.display='none';
+  render();
+});
+modePresetBtn.addEventListener('click', ()=>{
+  state.avatarMode = 'preset';
+  modePresetBtn.classList.add('active'); modeUploadBtn.classList.remove('active');
+  presetPane.style.display=''; uploadPane.style.display='none';
+  render();
+});
+
+const uploadZone = $('uploadZone'), fileInput = $('fileInput'), cropArea = $('cropArea'), cropBox = $('cropBox'), zoomRange = $('zoomRange');
+uploadZone.addEventListener('click', ()=> fileInput.click());
+fileInput.addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    state.uploadedImage = ev.target.result;
+    state.avatarMode = 'upload';
+    state.crop = { bgSizeW:100, bgSizeH:100, posX:50, posY:50, zoom:1 };
+    cropArea.classList.add('show');
+    uploadZone.style.display='none';
+    const img = new Image();
+    img.onload = ()=>{
+      // compute cover-fit base percentages relative to square container
+      const ratio = img.naturalWidth / img.naturalHeight;
+      if(ratio >= 1){ state.crop.baseW = 100*ratio; state.crop.baseH = 100; }
+      else { state.crop.baseW = 100; state.crop.baseH = 100/ratio; }
+      applyCropBoxStyle();
+    };
+    img.src = state.uploadedImage;
+    render();
+  };
+  reader.readAsDataURL(file);
+});
+$('clearUpload').addEventListener('click', ()=>{
+  state.uploadedImage = null;
+  fileInput.value = '';
+  cropArea.classList.remove('show');
+  uploadZone.style.display='';
+  render();
+});
+function applyCropBoxStyle(){
+  const c = state.crop;
+  const w = (c.baseW||100) * c.zoom;
+  const h = (c.baseH||100) * c.zoom;
+  cropBox.style.backgroundImage = `url(${state.uploadedImage})`;
+  cropBox.style.backgroundSize = `${w}% ${h}%`;
+  cropBox.style.backgroundPosition = `${c.posX}% ${c.posY}%`;
+}
+zoomRange.addEventListener('input', ()=>{
+  state.crop.zoom = zoomRange.value/100;
+  applyCropBoxStyle();
+  syncPreviewAvatarFromCrop();
+});
+// drag to pan
+let dragging=false, dragStart={x:0,y:0}, startPos={x:50,y:50};
+cropBox.addEventListener('pointerdown', e=>{
+  dragging=true; cropBox.setPointerCapture(e.pointerId);
+  dragStart={x:e.clientX,y:e.clientY}; startPos={x:state.crop.posX,y:state.crop.posY};
+});
+cropBox.addEventListener('pointermove', e=>{
+  if(!dragging) return;
+  const rect = cropBox.getBoundingClientRect();
+  const dx = (e.clientX - dragStart.x)/rect.width*100;
+  const dy = (e.clientY - dragStart.y)/rect.height*100;
+  state.crop.posX = clamp(startPos.x - dx, 0, 100);
+  state.crop.posY = clamp(startPos.y - dy, 0, 100);
+  applyCropBoxStyle();
+  syncPreviewAvatarFromCrop();
+});
+cropBox.addEventListener('pointerup', ()=> dragging=false);
+cropBox.addEventListener('pointercancel', ()=> dragging=false);
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+function syncPreviewAvatarFromCrop(){ render(); }
+
+// preset avatars grid
+function buildPresetGrid(container, list){
+  container.innerHTML='';
+  list.forEach(a=>{
+    const div = document.createElement('div');
+    div.className = 'preset-avatar';
+    div.style.backgroundImage = `url(${a.image})`;
+    div.innerHTML = '<div class="tick">✓</div>';
+    div.addEventListener('click', ()=>{
+      state.avatarMode='preset'; state.presetAvatarId = a.id;
+      document.querySelectorAll('.preset-avatar').forEach(el=>el.classList.remove('selected'));
+      div.classList.add('selected');
+      clearFieldError('field-avatar');
+      render();
+    });
+    container.appendChild(div);
+  });
+}
+buildPresetGrid($('presetMaleGrid'), presetAvatars.male);
+buildPresetGrid($('presetFemaleGrid'), presetAvatars.female);
+
+/* ============ Section 3: hiding objects ============ */
+const objGrid = $('objGrid');
+hidingObjects.forEach(o=>{
+  const card = document.createElement('div');
+  card.className='obj-card';
+  card.innerHTML = `<img src="${o.image}" alt="${o.name}"><div class="oname">${o.name}</div><div class="tick">✓</div>`;
+  card.addEventListener('click', ()=>{
+    state.objectId = o.id;
+    document.querySelectorAll('.obj-card').forEach(el=>el.classList.remove('selected'));
+    card.classList.add('selected');
+    $('objErr').style.display='none';
+    render();
+  });
+  objGrid.appendChild(card);
+});
+
+/* ============ Section 4: advice ============ */
+inputAdvice.addEventListener('input', ()=>{
+  state.advice = inputAdvice.value;
+  adviceCounter.textContent = `${state.advice.length}/120`;
+  render();
+});
+
+/* ============ Section 5: motto ============ */
+const mottoList = $('mottoList');
+mottoOptions.forEach((m,i)=>{
+  const row = document.createElement('label');
+  row.className='motto-opt';
+  row.innerHTML = `<input type="radio" name="motto" value="${i}"><span>${m}</span>`;
+  row.addEventListener('click', ()=> selectMotto(i, row));
+  mottoList.appendChild(row);
+});
+const customRow = document.createElement('label');
+customRow.className='motto-opt';
+customRow.innerHTML = `<input type="radio" name="motto" value="custom"><span>✍️ Tự nhập châm ngôn</span>`;
+customRow.addEventListener('click', ()=> selectMotto('custom', customRow));
+mottoList.appendChild(customRow);
+
+function selectMotto(val, rowEl){
+  document.querySelectorAll('.motto-opt').forEach(el=>el.classList.remove('selected'));
+  rowEl.classList.add('selected');
+  rowEl.querySelector('input').checked = true;
+  if(val==='custom'){
+    state.mottoMode='custom'; state.mottoPresetIndex=null;
+    $('mottoCustomWrap').classList.add('show');
+  } else {
+    state.mottoMode='preset'; state.mottoPresetIndex=val;
+    $('mottoCustomWrap').classList.remove('show');
+  }
+  render();
+}
+inputMottoCustom.addEventListener('input', ()=>{
+  state.mottoCustom = inputMottoCustom.value;
+  mottoCounter.textContent = `${state.mottoCustom.length}/80`;
+  render();
+});
+
+/* ============ RENDER PREVIEW ============ */
+function render(){
+  $('pvName').textContent = state.name.trim() ? state.name : 'Nhập tên ingame';
+  $('pvUid').textContent = 'UID: ' + (state.uid.trim() ? state.uid : 'Nhập UID ingame');
+
+  // avatar
+  const pvAvatar = $('pvAvatar');
+  if(state.avatarMode==='upload' && state.uploadedImage){
+    const c = state.crop;
+    const w = (c.baseW||100) * c.zoom, h = (c.baseH||100)*c.zoom;
+    pvAvatar.style.backgroundImage = `url(${state.uploadedImage})`;
+    pvAvatar.style.backgroundSize = `${w}% ${h}%`;
+    pvAvatar.style.backgroundPosition = `${c.posX}% ${c.posY}%`;
+  } else if(state.avatarMode==='preset' && state.presetAvatarId){
+    const all = [...presetAvatars.male, ...presetAvatars.female];
+    const a = all.find(x=>x.id===state.presetAvatarId);
+    pvAvatar.style.backgroundImage = a ? `url(${a.image})` : '';
+    pvAvatar.style.backgroundSize='cover'; pvAvatar.style.backgroundPosition='center';
+  } else {
+    pvAvatar.style.backgroundImage='';
+  }
+
+  // object
+  const obj = hidingObjects.find(o=>o.id===state.objectId);
+  $('pvObjImg').src = obj ? obj.image : '';
+  $('pvObjImg').style.visibility = obj ? 'visible':'hidden';
+  $('pvObjName').textContent = obj ? obj.name : 'Chưa chọn';
+
+  // advice / motto
+  $('pvAdvice').textContent = state.advice.trim() ? state.advice : 'Chia sẻ bí quyết giúp anh em trốn thật lâu.';
+  let mottoText = 'Chọn câu nói thể hiện phong cách trốn của anh em.';
+  if(state.mottoMode==='preset' && state.mottoPresetIndex!==null) mottoText = mottoOptions[state.mottoPresetIndex];
+  if(state.mottoMode==='custom' && state.mottoCustom.trim()) mottoText = state.mottoCustom;
+  $('pvMotto').textContent = mottoText;
+}
+render();
+
+/* ============ Field error helpers ============ */
+function setFieldError(id){ $(id).classList.add('invalid'); }
+function clearFieldError(id){ $(id).classList.remove('invalid'); }
+function scrollTo(id){ $(id).scrollIntoView({behavior:'smooth', block:'center'}); }
+
+/* ============ Scroll to preview button ============ */
+$('btnScrollPreview').addEventListener('click', ()=>{
+  $('previewCol').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* ============ VALIDATE + GENERATE ============ */
+let isGenerating = false;
+function validateAndGenerate(){
+  if(isGenerating) return;
+  clearFieldError('field-name'); clearFieldError('field-uid'); clearFieldError('field-avatar');
+  $('objErr').style.display='none';
+
+  if(!state.name.trim()){ setFieldError('field-name'); scrollTo('field-name'); toast('Nhập tên ingame trước nhé!'); return; }
+  if(!state.uid.trim()){ setFieldError('field-uid'); scrollTo('field-uid'); toast('Nhập UID ingame trước nhé!'); return; }
+  const hasAvatar = (state.avatarMode==='upload' && state.uploadedImage) || (state.avatarMode==='preset' && state.presetAvatarId);
+  if(!hasAvatar){ setFieldError('field-avatar'); scrollTo('field-avatar'); toast('Chọn hoặc tải ảnh đại diện trước nhé!'); return; }
+  if(!state.objectId){ $('objErr').style.display='block'; scrollTo('field-object'); toast('Chọn 1 đồ vật muốn hóa thân nhé!'); return; }
+
+  generateImage();
+}
+$('btnGenerate').addEventListener('click', validateAndGenerate);
+$('btnGenerateBottom').addEventListener('click', validateAndGenerate);
+
+let lastCanvas = null;
+function generateImage(){
+  isGenerating = true;
+  setGenLoading(true);
+  $('previewCol').scrollIntoView({behavior:'smooth', block:'start'});
+
+  const el = $('exportCard');
+  const targetWidth = 1080;
+  const scale = targetWidth / el.offsetWidth;
+
+  setTimeout(()=>{
+    html2canvas(el, { scale: scale, useCORS: true, backgroundColor: '#0B0A12' }).then(canvas=>{
+      lastCanvas = canvas;
+      $('resultActions').classList.add('show');
+      isGenerating = false;
+      setGenLoading(false);
+      toast('Đã tạo ảnh xong! Kéo xuống để tải về nhé 🎉');
+      $('resultActions').scrollIntoView({behavior:'smooth', block:'center'});
+    }).catch(err=>{
+      isGenerating = false;
+      setGenLoading(false);
+      toast('Có lỗi khi tạo ảnh, thử lại nhé!');
+      console.error(err);
+    });
+  }, 80);
+}
+function setGenLoading(loading){
+  const btns = [$('btnGenerate'), $('btnGenerateBottom')];
+  btns.forEach(b=>{
+    b.disabled = loading;
+    b.innerHTML = loading ? '<span class="spinner"></span> Đang tạo ảnh...' : '🎮 TẠO ẢNH';
+  });
+}
+
+/* ============ Download / Facebook ============ */
+$('btnDownload').addEventListener('click', ()=>{
+  if(!lastCanvas) return;
+  const slug = slugify(state.name || 'nguoi-choi');
+  const link = document.createElement('a');
+  link.download = `tron-co-nay-du-thang-chua-${slug}.png`;
+  link.href = lastCanvas.toDataURL('image/png', 1.0);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+});
+$('btnFacebook').addEventListener('click', ()=>{
+  window.open(FB_GROUP_URL, '_blank');
+});
+function slugify(str){
+  const map = {'à':'a','á':'a','ạ':'a','ả':'a','ã':'a','â':'a','ầ':'a','ấ':'a','ậ':'a','ẩ':'a','ẫ':'a','ă':'a','ằ':'a','ắ':'a','ặ':'a','ẳ':'a','ẵ':'a','è':'e','é':'e','ẹ':'e','ẻ':'e','ẽ':'e','ê':'e','ề':'e','ế':'e','ệ':'e','ể':'e','ễ':'e','ì':'i','í':'i','ị':'i','ỉ':'i','ĩ':'i','ò':'o','ó':'o','ọ':'o','ỏ':'o','õ':'o','ô':'o','ồ':'o','ố':'o','ộ':'o','ổ':'o','ỗ':'o','ơ':'o','ờ':'o','ớ':'o','ợ':'o','ở':'o','ỡ':'o','ù':'u','ú':'u','ụ':'u','ủ':'u','ũ':'u','ư':'u','ừ':'u','ứ':'u','ự':'u','ử':'u','ữ':'u','ỳ':'y','ý':'y','ỵ':'y','ỷ':'y','ỹ':'y','đ':'d'};
+  let s = str.toLowerCase().split('').map(ch=>map[ch]||ch).join('');
+  return s.replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || 'nguoi-choi';
+}
+
+/* ============ Reset ============ */
+$('btnReset').addEventListener('click', ()=> $('resetModal').classList.add('show'));
+$('cancelReset').addEventListener('click', ()=> $('resetModal').classList.remove('show'));
+$('confirmReset').addEventListener('click', ()=>{
+  location.reload();
+});
+
+/* ============ Toast ============ */
+let toastTimer=null;
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+</script>
+</body>
+</html>
