@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<title>Trốn Cỡ Này Đủ Thắng Chưa? | Crossfire: Legends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page-bg-photo"></div>
+<div class="page-bg-overlay"></div>
+
+<div class="topbar">
+  <img class="brand-logo" src="assets/logo.png" alt="Crossfire Legends">
+  <div class="brand">
+    <span class="eyebrow">CROSSFIRE: LEGENDS · TRỐN TÌM</span>
+    <span class="title">Trốn Cỡ Này Đủ Thắng Chưa?</span>
+    <span class="hint">Nhập thông tin, chọn đồ hóa thân, tải ảnh về và đăng lên Group nhé.</span>
+  </div>
+  <button class="btn-see" id="btnScrollPreview">
+    Xem thành phẩm
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<div class="wrap">
+  <div class="form-col">
+
+    <!-- SECTION 1 -->
+    <div class="section">
+      <div class="section-head"><span class="section-num">1</span><span class="section-title">Thông tin cá nhân</span></div>
+      <div class="field" id="field-name">
+        <label class="flabel"><span>Tên ingame</span><span class="counter" id="nameCounter">0/25</span></label>
+        <input type="text" id="inputName" maxlength="25" placeholder="Nhập tên ingame">
+        <div class="err-msg">Nhớ nhập tên ingame trước khi tạo ảnh nha.</div>
+      </div>
+      <div class="field" id="field-uid">
+        <label class="flabel"><span>UID ingame</span><span class="counter" id="uidCounter">0/18</span></label>
+        <input type="text" id="inputUid" maxlength="18" placeholder="Nhập UID ingame">
+        <div class="err-msg">UID chỉ gồm chữ và số, và không được để trống.</div>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section" id="field-avatar">
+      <div class="section-head"><span class="section-num">2</span><span class="section-title">Chọn ảnh đại diện</span></div>
+      <div class="avatar-modes">
+        <button class="mode-btn active" id="modeUploadBtn" type="button">📤 Tải ảnh cá nhân</button>
+        <button class="mode-btn" id="modePresetBtn" type="button">🎭 Avatar có sẵn</button>
+      </div>
+
+      <div id="uploadPane">
+        <div class="upload-zone" id="uploadZone">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.8"><path d="M12 16V4m0 0L7 9m5-5l5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg><br>
+          Chạm để chọn ảnh (JPG, PNG, WEBP)
+        </div>
+        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+        <div class="crop-area" id="cropArea">
+          <div class="crop-box" id="cropBox"></div>
+          <div class="crop-controls">
+            <span>－</span><input type="range" id="zoomRange" min="100" max="300" value="100"><span>＋</span>
+          </div>
+          <div class="crop-actions"><button class="link-btn" id="clearUpload" type="button">Xóa ảnh, chọn lại</button></div>
+        </div>
+      </div>
+
+      <div id="presetPane" style="display:none;">
+        <div class="avatar-preset-label">AVATAR NAM</div>
+        <div class="preset-grid" id="presetMaleGrid"></div>
+        <div class="avatar-preset-label">AVATAR NỮ</div>
+        <div class="preset-grid" id="presetFemaleGrid"></div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section" id="field-object">
+      <div class="section-head"><span class="section-num">3</span><span class="section-title">CHỌN ĐỒ VẬT BẠN THÍCH HOÁ THÂN THÀNH NHẤT</span></div>
+      <div class="obj-grid" id="objGrid"></div>
+      <div class="err-msg" id="objErr" style="display:none;margin-top:10px;">Chọn 1 đồ vật để hóa thân trước khi tạo ảnh nha.</div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section">
+      <div class="section-head"><span class="section-num">4</span><span class="section-title">Lời khuyên khi hóa thân</span></div>
+      <div class="field">
+        <label class="flabel"><span></span><span class="counter" id="adviceCounter">0/100</span></label>
+        <textarea id="inputAdvice" maxlength="100" placeholder="Ví dụ: Nên đứng gần những đồ vật có hình dạng tương tự để khó bị phát hiện."></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section">
+      <div class="section-head"><span class="section-num">5</span><span class="section-title">PHONG CÁCH CHƠI phe trốn</span></div>
+      <div id="mottoList"></div>
+      <div class="motto-custom-wrap" id="mottoCustomWrap">
+        <div class="field">
+          <label class="flabel"><span>Tự nhập PHONG CÁCH CHƠI</span><span class="counter" id="mottoCounter">0/90</span></label>
+          <input type="text" id="inputMottoCustom" maxlength="90" placeholder="Nhập PHONG CÁCH CHƠI của riêng bạn">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btnGenerate" type="button">
+      <span id="genLabel">🎮 TẠO ẢNH</span>
+    </button>
+
+    <div class="result-actions" id="resultActions">
+      <button class="btn-gold" id="btnDownload" type="button">⬇️ TẢI ẢNH VỀ</button>
+      <button class="btn-fb" id="btnFacebook" type="button">📣 ĐĂNG BÀI VÀO GROUP CROSSFIRE: LEGENDS</button>
+      <div class="hint" style="text-align:center;">Hãy tải ảnh về trước, sau đó đăng ảnh vào Group để tham gia sự kiện.</div>
+    </div>
+
+    <div class="reset-row"><button class="reset-btn" id="btnReset" type="button">Làm lại từ đầu</button></div>
+    <div class="footer-note">Ảnh và thông tin của bạn chỉ xử lý ngay trên máy — không gửi lên server nào cả.</div>
+  </div>
+
+  <div class="preview-col" id="previewCol">
+    <div class="preview-title"><h3>Xem trước thành phẩm</h3><span class="tag">Tự động cập nhật</span></div>
+    <div class="card-outer">
+      <div id="exportCard">
+        <div class="scanlines"></div>
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <img class="pv-logo" id="pvLogo" src="" alt="Crossfire Legends" crossorigin="anonymous">
+        <div class="pv-event">EVENT</div>
+        <div class="pv-title">TRỐN CỠ NÀY<br>ĐỦ THẮNG CHƯA?</div>
+        <div class="pv-avatar-wrap"><div class="pv-avatar-frame" id="pvAvatar"><img class="pv-avatar-img" id="pvAvatarImg" alt="" crossorigin="anonymous"></div></div>
+        <div class="pv-id">
+          <div class="name" id="pvName">Nhập tên ingame</div>
+          <div class="uid" id="pvUid">UID: Nhập UID ingame</div>
+        </div>
+        <div class="pv-obj-section">
+          <div class="pv-obj-title">ĐỒ VẬT YÊU THÍCH TRONG MODE TRỐN TÌM</div>
+          <div class="pv-obj-body">
+            <img class="pv-obj-img empty" id="pvObjImg" src="" alt="">
+            <div class="pv-obj-name empty" id="pvObjName">Chưa chọn</div>
+          </div>
+        </div>
+        <div class="pv-bottom">
+          <div class="pv-box"><div class="lbl">CHIẾN THUẬT</div><div class="txt" id="pvMotto">Chọn câu nói thể hiện phong cách trốn của anh em.</div></div>
+          <div class="pv-box"><div class="lbl">LỜI KHUYÊN</div><div class="txt" id="pvAdvice">Chia sẻ bí quyết giúp anh em trốn thật lâu.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottombar">
+  <button class="btn-primary" id="btnGenerateBottom" type="button">🎮 TẠO ẢNH</button>
+</div>
+
+<div class="modal-backdrop" id="resetModal">
+  <div class="modal">
+    <h4>Làm lại từ đầu?</h4>
+    <p>Toàn bộ thông tin, ảnh và lựa chọn hiện tại sẽ bị xóa. Bạn chắc chắn chứ?</p>
+    <div class="modal-row">
+      <button class="modal-cancel" id="cancelReset">Hủy</button>
+      <button class="modal-confirm" id="confirmReset">Làm lại</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
